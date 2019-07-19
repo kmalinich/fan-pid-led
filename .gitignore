@@ -1,0 +1,11 @@
+*.bak
+*.log
+*.swo
+*.swp
+._*
+.DS_Store
+
+/*.elf
+/*.hex
+
+/test/
