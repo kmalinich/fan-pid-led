@@ -26,6 +26,7 @@
 #define PWM_OUT 3  // PWM output pin
 #define RPM_IN  2  // RPM input pin
 #define TEMP_IN A0 // TMP36 sensor input pin
+#define LCD_TX  11 // LCD data pin
 
 // Minimum and maximum fan duty cycle (1..255)
 #define DUTY_MIN   5
@@ -39,18 +40,17 @@
 
 
 // Temperature target for PID control
-double temp_target = 45;
+double temp_target = 40;
 
 // Temperature minimum and maximum for RGB control
 unsigned int temp_min = 20;
-unsigned int temp_max = 63;
+unsigned int temp_max = 60;
 
 // Init measurement sample array
 int samples[SAMPLE_COUNT];
 
 // Computed sensor temperature
 double temp_c;
-double temp_f;
 
 // Fan RPM
 unsigned int fan_speed;
@@ -70,7 +70,7 @@ signed long time_prev;
 PID fanPID(&temp_c, &duty, &temp_target, KP, KI, KD, REVERSE);
 
 // Create a software serial port for the LCD
-SoftwareSerial lcd = SoftwareSerial(0, 11);
+SoftwareSerial lcd = SoftwareSerial(0, LCD_TX);
 
 
 void setup_lcd() {
@@ -119,7 +119,7 @@ void setup_lcd() {
 	lcd_rgb(0xFF, 0x00, 0xFF);
 
 	// Send init text
-	lcd_text("  INITIALIZING  ", "   LEDFan 3.0   ");
+	lcd_text("  INITIALIZING  ", "   LEDFan 3.1   ");
 }
 
 void lcd_text(String string1, String string2) {
@@ -281,12 +281,8 @@ void loop() {
 	float voltage = (average * 5.000) / 1024.000;
 	temp_c = (voltage - 0.470) * 100;
 
-	// Calculate Fahrenheit
-	temp_f = (temp_c * 1.8) + 32;
-
 	// Round values
 	temp_c = round(temp_c);
-	temp_f = round(temp_f);
 
 	// Compute PID fan control and write PWM value out to fan
 	fanPID.Compute();
@@ -298,14 +294,11 @@ void loop() {
 	// Debug output
 	DEBUG("Temp: ");
 	DEBUG(temp_c);
-	DEBUG("°C/");
-	DEBUG(temp_f);
-	DEBUG("°F - Power: ");
+	DEBUG("°C - Power: ");
 	DEBUG(fan_duty);
-	DEBUG("% - ");
-
+	DEBUG("% - RPM: ");
 	DEBUG(fan_speed);
-	DEBUG("rpm ");
+	DEBUG(" - Pulse duration: ");
 	DEBUGLN(pulse_duration);
 
 
@@ -320,7 +313,7 @@ void loop() {
 	lcd_string1.concat(fan_speed);
 	lcd_string1.concat("rpm");
 
-	String lcd_string2 = "LEDFan 3.0  ";
+	String lcd_string2 = "LEDFan 3.1  ";
 
 	if (fan_duty < 100) lcd_string2.concat(" ");
 	if (fan_duty < 10)  lcd_string2.concat(" ");
