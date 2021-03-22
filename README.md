@@ -15,4 +15,4 @@ PID control for PWM fan to keep 100W LED at proper temperature
 * [Droking 600W constant current driver](https://smile.amazon.com/dp/B01DBZHUXA)
 
 ## External libraries:
- * [PID](https://github.com/br3ttb/Arduino-PID-Library)
+ * [PID](https://github.com/gelraen/Arduino-PID-Library)

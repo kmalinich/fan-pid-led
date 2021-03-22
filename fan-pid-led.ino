@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include <SoftwareSerial.h>
-#include <PID_v1.h> // https://github.com/br3ttb/Arduino-PID-Library
+#include <PID_v2.h> // https://github.com/gelraen/Arduino-PID-Library
 
 
 // Amount of time (in ms) to wait between updates
